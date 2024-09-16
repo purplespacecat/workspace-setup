@@ -1,7 +1,10 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
-alias repo='cd ~/repo'
+alias repo='cd ~/Documents/repo/'
+alias prod1='k config use-context prod-prod1'
+alias prod2='k config use-context prod-prod2'
 alias k=kubectl
+
 #HISTFILESIZE
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=10000000
@@ -21,6 +24,12 @@ setopt HIST_VERIFY               # Don't execute immediately upon history expans
 setopt HIST_BEEP                 # Beep when accessing nonexistent history.
 # Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
+export PATH="$HOME/repo/cre-scripts:$PATH"
+export REPO_GITOPS="$HOME/Documents/repo/prod/"
+export PROD1="$HOME/Documents/repo/prod/prod1"
+export PROD2="$HOME/Documents/repo/prod/prod2"
+export PATH="$HOME/bin/"
+export PATH="$PATH:/usr/local/go/bin"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time Oh My Zsh is loaded, in which case,
@@ -101,7 +110,6 @@ plugins=(
 
 source $ZSH/oh-my-zsh.sh
 
-source $ZSH/oh-my-zsh.sh
 
 # User configuration
 

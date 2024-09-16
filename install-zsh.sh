@@ -17,13 +17,13 @@ command -v zsh &> /dev/null || sudo apt install zsh -y
 
 #Check if starship is installed, probably needs review
 if ! command -v starship &> /dev/null; then
-    curl -sS https://starship.rs/install.sh | sh -y
+    curl -sS https://starship.rs/install.sh | sh
     starship preset nerd-font-symbols -o $HOME/.config/starship.toml
 else
     echo 'Starship is already installed'
 fi
 #Check if zip is installed
-command -v zip &> /dev/null || sudo apt install zip -y
+command -v zip &> /dev/null || sudo apt install zip
 
 #Install Hack Nerd Font
 if ! fc-list | grep -qi 'Hack Nerd Font'; then
