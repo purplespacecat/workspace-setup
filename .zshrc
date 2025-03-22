@@ -149,4 +149,5 @@ source <(fzf --zsh)
 # Tool aliases
 alias cd=z
 alias cat=bat
+alias lg=lazygit
 alias vim=nvim
