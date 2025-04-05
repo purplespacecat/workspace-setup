@@ -11,7 +11,30 @@
         state: present
       loop: "{{ lookup('file', '../pkglists/arch.txt').splitlines() }}"
 
-    # ...existing code...
+    - name: Install required packages (Ubuntu)
+      when: ansible_distribution == "Ubuntu"
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - zsh
+        - git
+        - unzip
+        - wget
+        - curl
+        - fonts-hack-ttf
+
+    - name: Install Oh My Zsh
+      shell: |
+        sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+      args:
+        creates: "{{ ansible_env.HOME }}/.oh-my-zsh"
+
+    - name: Install Starship
+      shell: |
+        curl -sS https://starship.rs/install.sh | sh -s -- -y
+      args:
+        creates: "{{ ansible_env.HOME }}/.config/starship.toml"
 
     - name: Copy configuration files
       copy:
@@ -21,4 +44,24 @@
         - { src: "../config/.zshrc", dest: "{{ ansible_env.HOME }}/.zshrc" }
         - { src: "../config/starship.toml", dest: "{{ ansible_env.HOME }}/.config/starship.toml" }
 
-    # ...existing code...
+    - name: Set Zsh as default shell
+      shell: chsh -s $(which zsh)
+      when: ansible_env.SHELL != "/usr/bin/zsh"
+
+    - name: Install Zsh plugins
+      git:
+        repo: "{{ item.repo }}"
+        dest: "{{ item.dest }}"
+      loop:
+        - { repo: "https://github.com/zsh-users/zsh-autosuggestions", dest: "{{ ansible_env.HOME }}/.oh-my-zsh/custom/plugins/zsh-autosuggestions" }
+        - { repo: "https://github.com/zsh-users/zsh-syntax-highlighting", dest: "{{ ansible_env.HOME }}/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting" }
+
+    - name: Install Hack Nerd Font
+      shell: |
+        wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Hack.zip -O /tmp/Hack.zip
+        mkdir -p {{ ansible_env.HOME }}/.local/share/fonts
+        unzip /tmp/Hack.zip -d {{ ansible_env.HOME }}/.local/share/fonts
+        rm /tmp/Hack.zip
+        fc-cache -fv
+      args:
+        creates: "{{ ansible_env.HOME }}/.local/share/fonts/Hack Regular Nerd Font Complete.ttf"
