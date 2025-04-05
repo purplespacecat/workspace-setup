@@ -15,13 +15,14 @@ command -v zsh &> /dev/null || sudo apt install zsh -y
 [ ! -e "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions" ] && git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 [ ! -e "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting" ] && git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 
-#Check if starship is installed, probably needs review
+#Check if starship is installed
 if ! command -v starship &> /dev/null; then
     curl -sS https://starship.rs/install.sh | sh -y
     starship preset nerd-font-symbols -o $HOME/.config/starship.toml
 else
     echo 'Starship is already installed'
 fi
+
 #Check if zip is installed
 command -v zip &> /dev/null || sudo apt install zip -y
 
@@ -37,5 +38,5 @@ else
 fi
 
 #Copy config files
-cp starship.toml $HOME/.config/starship.toml
-cp .zshrc $HOME/.zshrc
+cp ../config/starship.toml $HOME/.config/starship.toml
+cp ../config/.zshrc $HOME/.zshrc

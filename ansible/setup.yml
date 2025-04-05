@@ -1,0 +1,24 @@
+---
+- name: Setup workspace environment
+  hosts: localhost
+  become: true
+
+  tasks:
+    - name: Install required packages (Arch Linux)
+      when: ansible_distribution == "Archlinux"
+      pacman:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ lookup('file', '../pkglists/arch.txt').splitlines() }}"
+
+    # ...existing code...
+
+    - name: Copy configuration files
+      copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+      loop:
+        - { src: "../config/.zshrc", dest: "{{ ansible_env.HOME }}/.zshrc" }
+        - { src: "../config/starship.toml", dest: "{{ ansible_env.HOME }}/.config/starship.toml" }
+
+    # ...existing code...

@@ -51,8 +51,7 @@ fi
 
 # Copy config files
 mkdir -p $HOME/.config
-cp starship.toml $HOME/.config/starship.toml
-cp .zshrc $HOME/.zshrc
+cp ../config/starship.toml $HOME/.config/starship.toml
+cp ../config/.zshrc $HOME/.zshrc
 
 echo "Shell setup complete. Restart your terminal or run 'zsh' to apply changes."
-
