@@ -16,6 +16,8 @@
    - `scripts/install-zsh-arch.sh`: Shell script for Arch Linux setup
    - `scripts/install-zsh-ubuntu.sh`: Shell script for Ubuntu setup
    - `scripts/restore-windows-apps.ps1`: PowerShell script for Windows setup
+   - `scripts/backup-system.sh`: Universal backup script for Linux systems
+   - `scripts/restore-system.sh`: Universal restore script for Linux systems
 
 2. **Configuration files**:
    - `config/.zshrc`: Zsh configuration with aliases and plugins
@@ -32,3 +34,40 @@
    - For automated setup: `ansible-playbook ansible/setup.yml`
    - For manual setup: Run appropriate script from `scripts/` directory
 3. Customize configuration files in `config/` as needed
+
+## Backup and Restore
+The repository now includes comprehensive backup and restore functionality for both Ubuntu and Arch Linux systems.
+
+### Creating a Backup
+```bash
+# Make the script executable
+chmod +x scripts/backup-system.sh
+
+# Run the backup script
+./scripts/backup-system.sh
+```
+
+The backup script will:
+- Detect your Linux distribution (Ubuntu or Arch)
+- Back up all installed packages (including AUR packages for Arch)
+- Save system configurations and dotfiles
+- Back up systemd services
+- Store crontab entries
+- Back up Flatpak and Snap packages if installed
+- Create a dated tar archive in your home directory
+
+### Restoring from Backup
+```bash
+# Make the script executable
+chmod +x scripts/restore-system.sh
+
+# Restore from a backup archive
+./scripts/restore-system.sh path/to/backup.tar.gz
+```
+
+The restore script will:
+- Automatically detect your distribution
+- Restore all packages from the backup
+- Restore your personal configurations
+- Reinstall Flatpak and Snap packages
+- Restore system services and crontab entries
