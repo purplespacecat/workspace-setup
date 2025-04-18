@@ -22,5 +22,13 @@ git clone https://github.com/github/copilot.vim.git \
 . "$HOME/.nvm/nvm.sh" || true
 nvm install 22 || true
 
+# Install fzf
+git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+~/.fzf/install || true
+
+# Configure bat alias
+mkdir -p ~/.local/bin
+ln -s /usr/bin/batcat ~/.local/bin/bat || true
+
 # Make the script executable after creating it
 chmod +x "$0"
