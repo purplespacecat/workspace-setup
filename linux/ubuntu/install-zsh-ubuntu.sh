@@ -37,5 +37,8 @@ else
 fi
 
 #Copy config files
-cp starship.toml $HOME/.config/starship.toml
-cp .zshrc $HOME/.zshrc
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CONFIG_DIR="$SCRIPT_DIR/../../config/shell"
+mkdir -p $HOME/.config
+cp "$CONFIG_DIR/starship.toml" $HOME/.config/starship.toml
+cp "$CONFIG_DIR/.zshrc" $HOME/.zshrc

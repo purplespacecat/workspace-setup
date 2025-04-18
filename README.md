@@ -1,23 +1,85 @@
-## workspace-setup
-*This repo contains some scripts and config files to quickly setup a working environment on new laptop/vm*
+# Workspace Setup
 
-## What's included?
-1. **Shell setup scripts**:
-   - `install-zsh-arch.sh`: Installs Zsh, Oh My Zsh, Starship prompt, and necessary plugins on Arch Linux.
-   - `install-zsh-ubuntu.sh`: Installs Zsh, Oh My Zsh, Starship prompt, and necessary plugins on Ubuntu.
+This repository contains scripts and configuration files to quickly set up a working environment on new laptops or virtual machines across different operating systems.
 
-2. **Configuration files**:
-   - `.zshrc`: Predefined Zsh configuration file with aliases, plugins, and Starship integration.
-   - `starship.toml`: Configuration file for the Starship prompt with custom symbols and styles.
+## Directory Structure
 
-3. **Package management**:
-   - `pkglist.txt`: A list of packages to install on Arch Linux using `pacman`.
+```
+.
+├── config/
+│   └── shell/
+│       ├── starship.toml    # Starship prompt configuration
+│       └── .zshrc          # Zsh shell configuration
+├── linux/
+│   ├── arch/
+│   │   ├── config-shell-tools-arch.sh   # Additional shell tools setup
+│   │   ├── install-zsh-arch.sh          # Zsh installation for Arch
+│   │   └── pkglist.txt                  # Arch Linux package list
+│   └── ubuntu/
+│       └── install-zsh-ubuntu.sh        # Zsh installation for Ubuntu
+└── windows/
+    └── restore-windows-apps.ps1         # Windows apps restoration script
+```
 
-4. **Additional scripts**:
-   - `config-shell-tools-arch.sh`: Installs additional shell tools and configurations, including LazyVim and Node.js via NVM.
-   - `restore-windows-apps.ps1`: A PowerShell script to restore essential applications and configurations on Windows, including WSL setup, app installations via Winget and Chocolatey, and enabling system features.
+## Features
+
+### Linux Setup
+#### Arch Linux
+- Complete Zsh environment setup with Oh My Zsh and Starship prompt
+- Additional development tools installation
+- Package installation from predefined list
+- Shell customization and configuration
+
+#### Ubuntu
+- Zsh environment setup with Oh My Zsh and Starship prompt
+- Shell customization and configuration
+
+### Windows Setup
+- Automated application restoration via Winget and Chocolatey
+- WSL setup and configuration
+- System features enablement
+- Development environment configuration
+
+### Shell Configuration
+- Custom Zsh configuration with useful aliases and plugins
+- Starship prompt with custom styling and features
 
 ## Usage
-1. Clone this repository to your local machine.
-2. Run the appropriate script for your operating system to set up your environment.
-3. Customize the configuration files as needed.
+
+1. Clone this repository:
+   ```bash
+   git clone <repository-url>
+   cd workspace-setup
+   ```
+
+2. Choose the appropriate script for your operating system:
+
+   ### For Arch Linux:
+   ```bash
+   cd linux/arch
+   ./install-zsh-arch.sh
+   ./config-shell-tools-arch.sh
+   ```
+
+   ### For Ubuntu:
+   ```bash
+   cd linux/ubuntu
+   ./install-zsh-ubuntu.sh
+   ```
+
+   ### For Windows:
+   ```powershell
+   cd windows
+   .\restore-windows-apps.ps1
+   ```
+
+3. Configuration files are located in the `config` directory:
+   - Copy `config/shell/.zshrc` to your home directory
+   - Copy `config/shell/starship.toml` to `~/.config/starship.toml`
+
+## Customization
+
+You can customize the configuration files according to your needs:
+- Edit `config/shell/.zshrc` for shell preferences
+- Modify `config/shell/starship.toml` for prompt customization
+- Update `linux/arch/pkglist.txt` to change the package selection for Arch Linux
