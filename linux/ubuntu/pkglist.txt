@@ -8,7 +8,6 @@ p7zip-full
 fd-find
 ripgrep
 jq
-tmux
 vim
 xclip
 zsh
