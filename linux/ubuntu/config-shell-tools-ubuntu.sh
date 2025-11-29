@@ -81,7 +81,7 @@ fi
 if [ ! -d "$HOME/.fzf" ]; then
     echo "Installing fzf..."
     git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-    ~/.fzf/install --all --no-update-rc
+    ~/.fzf/install
 else
     echo "fzf is already installed"
 fi
@@ -119,15 +119,4 @@ if ! command -v zoxide &> /dev/null; then
     curl -sS https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | bash
 else
     echo "zoxide is already installed"
-fi
-
-# Configure bat alias
-if [ ! -L "$HOME/.local/bin/bat" ] && [ ! -f "$HOME/.local/bin/bat" ]; then
-    mkdir -p ~/.local/bin
-    if [ -f /usr/bin/batcat ]; then
-        ln -s /usr/bin/batcat ~/.local/bin/bat
-        echo "Created bat symlink"
-    fi
-else
-    echo "bat alias already configured"
 fi

@@ -5,7 +5,6 @@ curl
 unzip
 zip
 p7zip-full
-bat
 fd-find
 ripgrep
 jq
