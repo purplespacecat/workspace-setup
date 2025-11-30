@@ -101,8 +101,6 @@ plugins=(
 
 source $ZSH/oh-my-zsh.sh
 
-source $ZSH/oh-my-zsh.sh
-
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
@@ -142,12 +140,16 @@ function y() {
 	fi
 	rm -f -- "$tmp"
 }
-# Shell tools
-eval "$(zoxide init zsh)"
-source <(fzf --zsh)
 
 # Tool aliases
 alias cd=z
 alias cat=bat
 alias lg=lazygit
 alias vim=nvim
+export PATH=$PATH:/usr/local/go/bin
+export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
+export PATH="$PATH:$HOME/.local/bin"
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+eval "$(zoxide init zsh)"
