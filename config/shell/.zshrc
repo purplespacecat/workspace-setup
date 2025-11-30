@@ -140,8 +140,6 @@ function y() {
 	fi
 	rm -f -- "$tmp"
 }
-# Shell tools
-source <(fzf --zsh)
 
 # Tool aliases
 alias cd=z
