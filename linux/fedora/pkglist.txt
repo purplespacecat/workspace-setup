@@ -1,0 +1,23 @@
+# Core utilities
+git
+wget
+unzip
+zip
+p7zip
+jq
+
+# Shell and terminal
+zsh
+tmux
+
+# Dev tools
+cmake
+luarocks
+
+# Search / file tools
+fd-find
+ripgrep
+xclip
+
+# System
+neofetch
