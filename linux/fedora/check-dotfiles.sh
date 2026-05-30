@@ -65,6 +65,9 @@ check_tool "nvim"      "neovim"    "see config-shell-tools-fedora.sh"
 check_tool "lazygit"   "lazygit"   "see config-shell-tools-fedora.sh"
 check_tool "yazi"      "yazi"      "see config-shell-tools-fedora.sh"
 check_tool "fzf"       "fzf"       "git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && ~/.fzf/install"
+check_tool "gh"        "GitHub CLI" "sudo dnf install -y gh"
+check_tool "bw"        "Bitwarden CLI" "npm install -g @bitwarden/cli"
+check_tool "obsidian-cli" "obsidian-cli" "go install github.com/Yakitrak/obsidian-cli@latest"
 
 # fzf shell integration (.fzf.zsh must exist for .zshrc to source it)
 if command -v fzf &>/dev/null && [ ! -f "$HOME/.fzf.zsh" ]; then
@@ -103,7 +106,7 @@ fix_issue() {
       git clone "$url" "$path"
       ;;
     omz)
-      sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+      sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
       ;;
     fzf_int)
       if [ -d "$HOME/.fzf" ]; then

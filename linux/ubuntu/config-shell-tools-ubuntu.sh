@@ -120,3 +120,43 @@ if ! command -v zoxide &> /dev/null; then
 else
     echo "zoxide is already installed"
 fi
+
+# Install GitHub CLI (official apt repo)
+if ! command -v gh &> /dev/null; then
+    echo "Installing GitHub CLI..."
+    sudo mkdir -p -m 755 /etc/apt/keyrings
+    wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null
+    sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+    sudo apt update
+    sudo apt install -y gh
+else
+    echo "gh is already installed"
+fi
+
+# Install Obsidian (.deb)
+if ! command -v obsidian &> /dev/null; then
+    echo "Installing Obsidian..."
+    OBSIDIAN_VERSION=$(curl -s "https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest" | grep -Po '"tag_name": "v\K[^"]*')
+    curl -Lo /tmp/obsidian.deb "https://github.com/obsidianmd/obsidian-releases/releases/latest/download/obsidian_${OBSIDIAN_VERSION}_amd64.deb"
+    sudo apt install -y /tmp/obsidian.deb
+    rm -f /tmp/obsidian.deb
+else
+    echo "Obsidian is already installed"
+fi
+
+# Install Obsidian CLI (Yakitrak) via go; lands in ~/go/bin
+if [ ! -x "$HOME/go/bin/obsidian-cli" ]; then
+    echo "Installing Obsidian CLI..."
+    go install github.com/Yakitrak/obsidian-cli@latest
+else
+    echo "Obsidian CLI is already installed"
+fi
+
+# Install Bitwarden CLI (no maintained native package; use npm)
+if ! command -v bw &> /dev/null; then
+    echo "Installing Bitwarden CLI..."
+    npm install -g @bitwarden/cli
+else
+    echo "Bitwarden CLI is already installed"
+fi

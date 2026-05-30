@@ -15,5 +15,6 @@ cmake
 btrfs-progs
 snapd
 luarocks
+golang-go
 neofetch
 fontconfig

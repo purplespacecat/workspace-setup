@@ -1,23 +1,33 @@
+# Dev/CLI tools only — Fedora KDE already ships the base system + desktop,
+# so (unlike the Arch list) this omits anything preinstalled: curl, fontconfig,
+# btrfs-progs, flatpak, etc. Cross-checked against linux/ubuntu/pkglist.txt.
+
 # Core utilities
 git
-wget
 unzip
 zip
-p7zip
+7zip
 jq
 
-# Shell and terminal
+# Editor / shell / terminal
 zsh
+vim-enhanced
 tmux
 
 # Dev tools
 cmake
 luarocks
+golang
 
-# Search / file tools
+# Search / file / clipboard
 fd-find
 ripgrep
-xclip
+wl-clipboard
+bat
+zoxide
 
-# System
-neofetch
+# CLIs
+gh
+
+# System info
+fastfetch
