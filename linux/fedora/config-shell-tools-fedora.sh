@@ -61,7 +61,14 @@ if command -v flatpak >/dev/null; then
 else
   echo "  flatpak not found — skipping Obsidian (install flatpak to enable)"
 fi
-# Obsidian CLI (Yakitrak) — built with go (installed via pkglist), lands in ~/go/bin
-[ -x "$HOME/go/bin/obsidian-cli" ] || go install github.com/Yakitrak/obsidian-cli@latest
+# Obsidian CLI: Yakitrak/obsidian-cli was renamed upstream to notesmd-cli — the old
+# module path no longer resolves, so install via the new path. Built with go (from
+# pkglist), binary lands in ~/go/bin as `notesmd-cli`.
+[ -x "$HOME/go/bin/notesmd-cli" ] || go install github.com/Yakitrak/notesmd-cli@latest
+# zsh completion → ~/.zsh_functions (already on fpath via config/shell/.zshrc).
+if [ -x "$HOME/go/bin/notesmd-cli" ]; then
+  mkdir -p "$HOME/.zsh_functions"
+  "$HOME/go/bin/notesmd-cli" completion zsh > "$HOME/.zsh_functions/_notesmd-cli"
+fi
 # Bitwarden CLI — no maintained native rpm, install via npm (Node already set up)
 command -v bw >/dev/null || npm install -g @bitwarden/cli >/dev/null

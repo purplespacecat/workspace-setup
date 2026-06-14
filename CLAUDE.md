@@ -4,7 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Purpose
 
-This repository contains automated setup scripts and configuration files for quickly setting up development environments on new laptops or VMs across Linux (Arch, Ubuntu) and Windows platforms.
+This repository contains automated setup scripts and configuration files for quickly setting up development environments on new laptops or VMs across Linux (Arch, Ubuntu, Fedora) and Windows platforms.
+
+> **Read [LEARNINGS.md](LEARNINGS.md) before modifying install logic** — it records non-obvious gotchas (upstream renames, broken pinned URLs, package quirks). Add an entry whenever a fix turns out to be non-obvious.
 
 ## Repository Structure
 
@@ -12,6 +14,7 @@ The repository is organized by operating system:
 
 - `linux/arch/` - Arch Linux setup scripts and package list
 - `linux/ubuntu/` - Ubuntu setup scripts
+- `linux/fedora/` - Fedora setup scripts (`setup.sh` entry point → `install-zsh-fedora.sh`, `config-shell-tools-fedora.sh`) and `pkglist.txt`
 - `windows/` - Windows PowerShell setup script
 - `config/shell/` - Shared shell configuration files (.zshrc, starship.toml)
 
