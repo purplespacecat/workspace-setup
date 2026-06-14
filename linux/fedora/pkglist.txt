@@ -13,6 +13,10 @@ jq
 zsh
 vim-enhanced
 tmux
+direnv
+
+# Secrets (sops is not packaged for Fedora — installed via go in config script)
+age
 
 # Dev tools
 cmake

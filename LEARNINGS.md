@@ -7,6 +7,17 @@ URL, module path, or package name).
 
 ## Fedora
 
+- **`sops` is not packaged for Fedora** (`dnf list sops` → nothing), so it's
+  installed via `go install github.com/getsops/sops/v3/cmd/sops@latest` (note the
+  `getsops` org and `/v3` — the project moved from Mozilla to the `getsops` org).
+  `age` and `direnv` *are* in the Fedora repos, so those go in `pkglist.txt`.
+- **direnv needs a shell hook** to work: `eval "$(direnv hook zsh)"` in `.zshrc`.
+  It's placed in `config/shell/.zshrc` *before* the zoxide init (zoxide's doctor
+  insists on being initialized last).
+- **age key location:** sops auto-discovers `~/.config/sops/age/keys.txt` on Linux
+  (XDG default) — no `SOPS_AGE_KEY_FILE` export needed. The config script
+  generates one if absent. This key is unrecoverable if lost; back it up.
+
 - **obsidian-cli was renamed to `notesmd-cli`** (2026-06). The upstream module
   `github.com/Yakitrak/obsidian-cli` now declares its path as
   `github.com/Yakitrak/notesmd-cli`, so `go install …/obsidian-cli@latest` fails

@@ -72,3 +72,15 @@ if [ -x "$HOME/go/bin/notesmd-cli" ]; then
 fi
 # Bitwarden CLI — no maintained native rpm, install via npm (Node already set up)
 command -v bw >/dev/null || npm install -g @bitwarden/cli >/dev/null
+
+step "Secrets tooling (sops + age + direnv)"
+# age + direnv come from pkglist (dnf). sops has no Fedora package — install via
+# go (already present). Binary lands in ~/go/bin as `sops`.
+[ -x "$HOME/go/bin/sops" ] || go install github.com/getsops/sops/v3/cmd/sops@latest
+# Generate a personal age key for sops if none exists (sops auto-discovers it here).
+if [ ! -f "$HOME/.config/sops/age/keys.txt" ] && command -v age-keygen >/dev/null; then
+  mkdir -p "$HOME/.config/sops/age"
+  age-keygen -o "$HOME/.config/sops/age/keys.txt"
+  chmod 600 "$HOME/.config/sops/age/keys.txt"
+  echo "  age key created — BACK UP ~/.config/sops/age/keys.txt (lose it = lose all sops-encrypted files)"
+fi
