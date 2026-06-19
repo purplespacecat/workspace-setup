@@ -7,6 +7,17 @@ URL, module path, or package name).
 
 ## Fedora
 
+- **Secrets workflow is 1Password (`op` CLI)** — not bw/sops/age (dropped
+  2026-06-19 after a work-provided free 1Password Family plan became available).
+  `op` has a native rpm: install from 1Password's official dnf repo
+  (`downloads.1password.com/linux/rpm/stable`), not via `go`/`npm`. The workflow
+  is `op run --env-file=.env` + `op://vault/item/field` references — no local key
+  material to back up (unlike the old sops/age age-key).
+- **direnv needs a shell hook** to work: `eval "$(direnv hook zsh)"` in `.zshrc`.
+  It's packaged in the Fedora repos (in `pkglist.txt`) and the hook lives in
+  `config/shell/.zshrc` *before* the zoxide init (zoxide's doctor insists on being
+  initialized last). Pairs with `op run` for per-project env loading.
+
 - **obsidian-cli was renamed to `notesmd-cli`** (2026-06). The upstream module
   `github.com/Yakitrak/obsidian-cli` now declares its path as
   `github.com/Yakitrak/notesmd-cli`, so `go install …/obsidian-cli@latest` fails

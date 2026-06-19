@@ -153,4 +153,7 @@ export PATH="$PATH:$HOME/.local/bin"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
+command -v direnv >/dev/null && eval "$(direnv hook zsh)"
+
+# keep zoxide init last (see its doctor warning)
 eval "$(zoxide init zsh)"

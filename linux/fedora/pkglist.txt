@@ -13,6 +13,7 @@ jq
 zsh
 vim-enhanced
 tmux
+direnv
 
 # Dev tools
 cmake

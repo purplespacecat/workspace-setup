@@ -50,7 +50,7 @@ if ! command -v yazi >/dev/null; then
   rm -rf /tmp/yazi.zip /tmp/yazi-x86_64-unknown-linux-gnu
 fi
 
-step "Obsidian + obsidian-cli, gh, Bitwarden CLI"
+step "Obsidian + obsidian-cli, gh"
 # gh installed via pkglist (dnf). Obsidian has no native rpm — use Flatpak
 # (preinstalled on Fedora Workstation/KDE).
 if command -v flatpak >/dev/null; then
@@ -70,5 +70,13 @@ if [ -x "$HOME/go/bin/notesmd-cli" ]; then
   mkdir -p "$HOME/.zsh_functions"
   "$HOME/go/bin/notesmd-cli" completion zsh > "$HOME/.zsh_functions/_notesmd-cli"
 fi
-# Bitwarden CLI — no maintained native rpm, install via npm (Node already set up)
-command -v bw >/dev/null || npm install -g @bitwarden/cli >/dev/null
+step "1Password CLI (op)"
+# Secrets workflow is 1Password-based: op run / op:// references (no local key
+# material). Install from 1Password's official dnf repo (has a native rpm).
+# direnv (from pkglist) pairs with `op run` for per-project env loading.
+if ! command -v op >/dev/null; then
+  sudo rpm --import https://downloads.1password.com/linux/keys/1password.asc
+  sudo sh -c 'echo -e "[1password]\nname=1Password Stable Channel\nbaseurl=https://downloads.1password.com/linux/rpm/stable/\$basearch\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=\"https://downloads.1password.com/linux/keys/1password.asc\"" > /etc/yum.repos.d/1password.repo'
+  sudo dnf install -q -y 1password-cli
+fi
+echo "  Sign in with: eval \"\$(op signin)\"  (or enable desktop-app CLI integration for biometric unlock)"
