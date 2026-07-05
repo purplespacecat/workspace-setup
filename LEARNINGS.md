@@ -36,3 +36,21 @@ URL, module path, or package name).
 - **`curl` is deliberately not in pkglist / `dnf install`** — listing it forces a
   swap from `curl-minimal` (shipped in `@core`) to full `curl`. See the comment
   in `install-zsh-fedora.sh`.
+
+- **Infra tooling is opt-in** (`install-infra-fedora.sh`, deliberately NOT run by
+  `setup.sh`) — kubectl, k9s, flux, with an `install_gh_bin` helper for adding
+  more. None of these are in Fedora's repos:
+  - **kubectl**: use the official `pkgs.k8s.io` dnf repo. It is
+    **per-minor-version** — the minor (e.g. `v1.36`) must be in the baseurl; there
+    is no "latest" stream. The script derives it from
+    `dl.k8s.io/release/stable.txt` so it stays current.
+  - **k9s / flux**: GitHub release binaries (same pattern as lazygit/yazi). k9s
+    asset is `k9s_Linux_amd64.tar.gz` (upstream switched `x86_64` → `amd64`); flux
+    asset embeds the version with **no leading v**: `flux_<ver>_linux_amd64.tar.gz`.
+  - **helm**: distributed from `get.helm.sh` (not GitHub assets); the binary is
+    **nested** in the tarball at `linux-amd64/helm`, so that's the inner path
+    passed to `install_gh_bin`.
+  - **kustomize**: the `kubernetes-sigs/kustomize` repo publishes several products,
+    so `/releases/latest` may point at a non-kustomize component — filter for the
+    `kustomize/vX.Y.Z` tag instead. The slash in that tag must be **URL-encoded
+    (`%2F`)** in the download path.
