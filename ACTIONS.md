@@ -36,3 +36,11 @@ run '~/.tmux/plugins/tpm/tpm'
 
 set -g @plugin 'tmux-plugins/tmux-continuum'
 set -g @continuum-restore 'on'
+
+## Obsidian vault: encrypted backup & restore
+# Daily encrypted backup (rclone crypt → Google Drive) is installed by
+# linux/fedora/config-shell-tools-fedora.sh (script: config/backup/vault-backup.sh,
+# units: config/systemd/vault-backup.{service,timer}).
+# RESTORE on a new machine: open the 1Password item "obsidian-vault-backup" —
+# its notes contain the full step-by-step guide (keys are its password/salt fields).
+# After restore: systemctl --user enable --now vault-backup.timer

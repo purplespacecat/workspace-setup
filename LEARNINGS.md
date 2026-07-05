@@ -22,6 +22,23 @@ URL, module path, or package name).
   and the warning pollutes every command's output (burns AI context tokens).
   `export _ZO_DOCTOR=0` before the init line silences it; interactive behavior
   is unaffected.
+- **1Password desktop-app CLI integration only accepts the system `op`** — it
+  validates root ownership + setgid `onepassword-cli` (`-rwxr-sr-x root
+  onepassword-cli /usr/bin/op`). A user-local copy (`~/.local/bin/op`) fails with
+  the misleading `connecting to desktop app: read: connection reset`, and it also
+  makes a `command -v op` install-guard skip the system package — guard on
+  `rpm -q 1password-cli` instead, and warn about stray user copies (they shadow
+  the system binary in PATHs that put `~/.local/bin` first, e.g. systemd units).
+- **rclone connection-string colon trap**: in an inline remote like
+  `:crypt,remote=gdrive:path:` the parser cuts the option value at the first
+  `:`, so `remote=gdrive` resolves to a **local `./gdrive` directory**
+  (cwd-relative) and the "backup" silently never leaves the machine. Always
+  define a named crypt remote (`rclone config create gdrive-crypt crypt
+  remote=gdrive:path`) and target `gdrive-crypt:`. Crypt passwords don't need to
+  live in the config — `RCLONE_CRYPT_PASSWORD(_2)` env vars (obscured) act as
+  defaults, which is how `config/backup/vault-backup.sh` injects them from
+  1Password. Vault restore guide lives in the 1Password item
+  `obsidian-vault-backup`.
 
 - **obsidian-cli was renamed to `notesmd-cli`** (2026-06). The upstream module
   `github.com/Yakitrak/obsidian-cli` now declares its path as
