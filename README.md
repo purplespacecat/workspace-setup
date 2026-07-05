@@ -67,6 +67,15 @@ This repository contains scripts and configuration files to quickly set up a wor
    ./install-zsh-ubuntu.sh
    ```
 
+   ### For Fedora:
+   ```bash
+   cd linux/fedora
+   ./setup.sh                    # shell foundation + dev tools & apps
+
+   # Optional — infra / Kubernetes tooling (kubectl, k9s, flux):
+   ./install-infra-fedora.sh
+   ```
+
    ### For Windows:
    ```powershell
    cd windows
