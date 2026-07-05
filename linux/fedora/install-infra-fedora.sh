@@ -4,7 +4,7 @@
 # NOT run by setup.sh. Run it yourself when you need infra tools:
 #   cd linux/fedora && ./install-infra-fedora.sh
 #
-# Installs: kubectl, k9s, flux.
+# Installs: kubectl, k9s, flux, helm, kustomize.
 # To add more tools (helm, kustomize, argocd, terraform, ...), drop a new
 # `step` block at the marker near the bottom — reuse install_gh_bin for
 # single-binary GitHub tarballs, or add a dnf-repo block like kubectl's.
@@ -57,17 +57,43 @@ if ! command -v flux >/dev/null; then
     flux
 fi
 
+step "helm (get.helm.sh release binary)"
+if ! command -v helm >/dev/null; then
+  # Distributed from get.helm.sh (not GitHub assets); binary is nested at
+  # linux-amd64/helm inside the tarball.
+  HELM_VER="$(curl -s https://api.github.com/repos/helm/helm/releases/latest | grep -Po '"tag_name": "\K[^"]*')"
+  install_gh_bin helm \
+    "https://get.helm.sh/helm-${HELM_VER}-linux-amd64.tar.gz" \
+    linux-amd64/helm
+fi
+
+step "kustomize (GitHub release binary)"
+if ! command -v kustomize >/dev/null; then
+  # The kustomize repo publishes several products; releases are tagged
+  # kustomize/vX.Y.Z, so filter for that tag rather than using /latest. The
+  # slash in the tag is URL-encoded (%2F) in the download path.
+  KUSTOMIZE_TAG="$(curl -s 'https://api.github.com/repos/kubernetes-sigs/kustomize/releases?per_page=30' | grep -Po '"tag_name": "\Kkustomize/v[^"]*' | head -1)"
+  KVER="${KUSTOMIZE_TAG#kustomize/}"
+  install_gh_bin kustomize \
+    "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F${KVER}/kustomize_${KVER}_linux_amd64.tar.gz" \
+    kustomize
+fi
+
 # ── Add more infra tools below ──────────────────────────────────────────────
-# e.g.  step "helm";  install_gh_bin helm "<url>" linux-amd64/helm
+# e.g.  step "argocd";  install_gh_bin argocd "<url>" <path-in-tar>
 # kubectl already ships an oh-my-zsh completion plugin; flux's is added here.
 
 step "Shell completions → ~/.zsh_functions"
 # ~/.zsh_functions is already on fpath via config/shell/.zshrc (see LEARNINGS.md).
 mkdir -p "$HOME/.zsh_functions"
-command -v flux >/dev/null && flux completion zsh > "$HOME/.zsh_functions/_flux"
+command -v flux      >/dev/null && flux completion zsh      > "$HOME/.zsh_functions/_flux"
+command -v helm      >/dev/null && helm completion zsh      > "$HOME/.zsh_functions/_helm"
+command -v kustomize >/dev/null && kustomize completion zsh > "$HOME/.zsh_functions/_kustomize"
 
 step "Infra tooling complete."
-command -v kubectl >/dev/null && kubectl version --client 2>/dev/null | head -1
-command -v k9s     >/dev/null && echo "  k9s $(k9s version -s 2>/dev/null | awk '/Version/{print $2}')"
-command -v flux    >/dev/null && flux --version
+command -v kubectl   >/dev/null && kubectl version --client 2>/dev/null | head -1
+command -v k9s       >/dev/null && echo "  k9s $(k9s version -s 2>/dev/null | awk '/Version/{print $2}')"
+command -v flux      >/dev/null && flux --version
+command -v helm      >/dev/null && echo "  $(helm version --short 2>/dev/null)"
+command -v kustomize >/dev/null && kustomize version 2>/dev/null | head -1
 echo "  New completions: run 'rm -f ~/.zcompdump* && exec zsh' if they don't show up."

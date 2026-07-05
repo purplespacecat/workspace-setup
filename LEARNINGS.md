@@ -47,3 +47,10 @@ URL, module path, or package name).
   - **k9s / flux**: GitHub release binaries (same pattern as lazygit/yazi). k9s
     asset is `k9s_Linux_amd64.tar.gz` (upstream switched `x86_64` → `amd64`); flux
     asset embeds the version with **no leading v**: `flux_<ver>_linux_amd64.tar.gz`.
+  - **helm**: distributed from `get.helm.sh` (not GitHub assets); the binary is
+    **nested** in the tarball at `linux-amd64/helm`, so that's the inner path
+    passed to `install_gh_bin`.
+  - **kustomize**: the `kubernetes-sigs/kustomize` repo publishes several products,
+    so `/releases/latest` may point at a non-kustomize component — filter for the
+    `kustomize/vX.Y.Z` tag instead. The slash in that tag must be **URL-encoded
+    (`%2F`)** in the download path.
