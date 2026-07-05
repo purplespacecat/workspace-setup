@@ -155,5 +155,8 @@ export PATH="$PATH:$HOME/.local/bin"
 
 command -v direnv >/dev/null && eval "$(direnv hook zsh)"
 
-# keep zoxide init last (see its doctor warning)
+# keep zoxide init last (see its doctor warning). _ZO_DOCTOR=0 because the
+# doctor false-positives in non-interactive shells (e.g. AI-agent/tool shells,
+# where precmd hooks never register) and spams every command's output.
+export _ZO_DOCTOR=0
 eval "$(zoxide init zsh)"

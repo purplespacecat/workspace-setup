@@ -17,6 +17,11 @@ URL, module path, or package name).
   It's packaged in the Fedora repos (in `pkglist.txt`) and the hook lives in
   `config/shell/.zshrc` *before* the zoxide init (zoxide's doctor insists on being
   initialized last). Pairs with `op run` for per-project env loading.
+- **zoxide doctor false-positives in non-interactive shells** (AI-agent/tool
+  shells, scripts) even when init *is* last — precmd hooks never register there,
+  and the warning pollutes every command's output (burns AI context tokens).
+  `export _ZO_DOCTOR=0` before the init line silences it; interactive behavior
+  is unaffected.
 
 - **obsidian-cli was renamed to `notesmd-cli`** (2026-06). The upstream module
   `github.com/Yakitrak/obsidian-cli` now declares its path as
