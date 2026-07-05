@@ -29,6 +29,7 @@ zoxide
 
 # CLIs
 gh
+rclone
 
 # System info
 fastfetch

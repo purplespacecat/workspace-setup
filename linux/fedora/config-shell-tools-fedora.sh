@@ -74,9 +74,28 @@ step "1Password CLI (op)"
 # Secrets workflow is 1Password-based: op run / op:// references (no local key
 # material). Install from 1Password's official dnf repo (has a native rpm).
 # direnv (from pkglist) pairs with `op run` for per-project env loading.
-if ! command -v op >/dev/null; then
+# NB: guard on the rpm, NOT `command -v op` — a stray user-local op (e.g.
+# ~/.local/bin/op) would pass the check, but desktop-app integration only
+# accepts the system binary (root:onepassword-cli, setgid). See LEARNINGS.md.
+if ! rpm -q 1password-cli >/dev/null 2>&1; then
   sudo rpm --import https://downloads.1password.com/linux/keys/1password.asc
   sudo sh -c 'echo -e "[1password]\nname=1Password Stable Channel\nbaseurl=https://downloads.1password.com/linux/rpm/stable/\$basearch\nenabled=1\ngpgcheck=1\nrepo_gpgcheck=1\ngpgkey=\"https://downloads.1password.com/linux/keys/1password.asc\"" > /etc/yum.repos.d/1password.repo'
   sudo dnf install -q -y 1password-cli
 fi
-echo "  Sign in with: eval \"\$(op signin)\"  (or enable desktop-app CLI integration for biometric unlock)"
+[ -e "$HOME/.local/bin/op" ] && echo "  WARNING: stray ~/.local/bin/op found — remove it (shadows the system op in some PATHs)"
+echo "  Enable app integration: 1Password app → Settings → Developer → 'Integrate with 1Password CLI'"
+
+step "Obsidian vault backup (rclone crypt → Google Drive)"
+# Encrypted daily backup of ~/Documents/obsidian. Crypt keys + the full restore
+# guide live in the 1Password item "obsidian-vault-backup" (Private vault).
+# On a NEW machine: restore the vault first (guide in that item), then enable
+# the timer. rclone comes from pkglist (Fedora repos).
+command -v rclone >/dev/null || sudo dnf install -q -y rclone
+install -D "$SCRIPT_DIR/../../config/backup/vault-backup.sh" "$HOME/.local/bin/vault-backup.sh"
+mkdir -p "$HOME/.config/systemd/user"
+cp "$SCRIPT_DIR/../../config/systemd/vault-backup.service" \
+   "$SCRIPT_DIR/../../config/systemd/vault-backup.timer" "$HOME/.config/systemd/user/"
+systemctl --user daemon-reload
+echo "  Once per machine (interactive): follow the restore guide in the 1Password"
+echo "  item 'obsidian-vault-backup' (rclone gdrive OAuth + gdrive-crypt remote),"
+echo "  then: systemctl --user enable --now vault-backup.timer"

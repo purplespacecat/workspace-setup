@@ -1,0 +1,7 @@
+[Unit]
+Description=Encrypted Obsidian vault backup to Google Drive (rclone crypt)
+
+[Service]
+Type=oneshot
+Environment=PATH=%h/.local/bin:/usr/local/bin:/usr/bin
+ExecStart=%h/.local/bin/vault-backup.sh
