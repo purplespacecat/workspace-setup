@@ -1,11 +1,11 @@
-#\!/bin/bash
+#!/bin/bash
 
 # Get script directory for relative path resolution
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONFIG_DIR="$SCRIPT_DIR/../../config/shell"
 
 # Install tmux if not already installed
-if \! command -v tmux &> /dev/null; then
+if ! command -v tmux &> /dev/null; then
     echo "Installing tmux..."
     sudo apt update
     sudo apt install -y tmux
@@ -14,7 +14,7 @@ else
 fi
 
 # Install TPM (Tmux Plugin Manager)
-if [ \! -d "$HOME/.tmux/plugins/tpm" ]; then
+if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
     echo "Installing Tmux Plugin Manager..."
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 else
@@ -31,6 +31,6 @@ else
 fi
 
 echo ""
-echo "Tmux setup complete\!"
+echo "Tmux setup complete!"
 echo "To install tmux plugins, start tmux and press: prefix + I (capital i)"
 echo "Default prefix is Ctrl+b"

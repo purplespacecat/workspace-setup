@@ -1,0 +1,7 @@
+# Docs Vault Location
+Whenever the user asks to "write to my docs", "read my docs", or mentions "my docs", always resolve this to the Obsidian vault directory at the following path:
+`~/Documents/obsidian`
+Do not ask for clarification about where the docs are located.
+
+# Communication & Command Execution
+Before running any commands or applying major changes, always explicitly narrate your reasoning and logic process to the user in your message. This allows the user to understand your plan, learn from it, or correct any assumptions before the action takes place.

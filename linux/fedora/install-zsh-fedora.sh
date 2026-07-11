@@ -32,7 +32,7 @@ command -v starship >/dev/null || curl -sS https://starship.rs/install.sh | sh -
 
 step "Hack Nerd Font"
 if ! fc-list | grep -qi 'Hack Nerd Font'; then
-  curl -fsSL https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Hack.zip -o /tmp/Hack.zip
+  curl -fsSL https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/Hack.zip -o /tmp/Hack.zip
   mkdir -p "$HOME/.local/share/fonts"
   unzip -oq /tmp/Hack.zip -d "$HOME/.local/share/fonts"
   rm -f /tmp/Hack.zip

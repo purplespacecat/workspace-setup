@@ -49,7 +49,7 @@ fi
 # Install nvm
 if [ ! -d "$HOME/.nvm" ]; then
     echo "Installing nvm..."
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.5/install.sh | bash
 else
     echo "nvm is already installed"
 fi
@@ -68,12 +68,12 @@ if [ -d "$HOME/.nvm" ]; then
     export NVM_DIR="$HOME/.nvm"
     [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 
-    # Check if Node.js 22 is installed
-    if ! nvm list | grep -q "v22"; then
-        echo "Installing Node.js 22..."
-        nvm install 22
+    # Check if Node.js 24 (current LTS) is installed
+    if ! nvm list | grep -q "v24"; then
+        echo "Installing Node.js 24..."
+        nvm install 24
     else
-        echo "Node.js 22 is already installed"
+        echo "Node.js 24 is already installed"
     fi
 fi
 
@@ -145,10 +145,11 @@ else
     echo "Obsidian is already installed"
 fi
 
-# Install Obsidian CLI (Yakitrak) via go; lands in ~/go/bin
-if [ ! -x "$HOME/go/bin/obsidian-cli" ]; then
-    echo "Installing Obsidian CLI..."
-    go install github.com/Yakitrak/obsidian-cli@latest
+# Install Obsidian CLI — upstream renamed obsidian-cli → notesmd-cli (see
+# LEARNINGS.md); built with go, lands in ~/go/bin as `notesmd-cli`
+if [ ! -x "$HOME/go/bin/notesmd-cli" ]; then
+    echo "Installing Obsidian CLI (notesmd-cli)..."
+    go install github.com/Yakitrak/notesmd-cli@latest
 else
     echo "Obsidian CLI is already installed"
 fi
@@ -160,3 +161,6 @@ if ! command -v bw &> /dev/null; then
 else
     echo "Bitwarden CLI is already installed"
 fi
+
+echo "Installing Antigravity tooling and backups..."
+bash "$SCRIPT_DIR/../config-agy.sh"

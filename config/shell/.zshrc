@@ -1,6 +1,6 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
-alias repo='cd ~/repo'
+alias repo='cd ~/repos'
 alias k=kubectl
 #HISTFILESIZE
 HISTFILE="$HOME/.zsh_history"
@@ -99,6 +99,11 @@ plugins=(
     zsh-syntax-highlighting
 )
 
+# Custom completions (_<tool> files). MUST be on fpath BEFORE oh-my-zsh.sh is
+# sourced — it runs compinit, and completions added to fpath after compinit
+# never register.
+fpath+=${ZDOTDIR:-~}/.zsh_functions
+
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
@@ -130,7 +135,6 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 eval "$(starship init zsh)"
-fpath+=${ZDOTDIR:-~}/.zsh_functions
 # yazi script
 function y() {
 	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd

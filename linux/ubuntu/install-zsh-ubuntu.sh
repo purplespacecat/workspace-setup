@@ -5,20 +5,20 @@
 #Install zsh
 command -v zsh &>/dev/null || sudo apt install zsh -y
 
-#Install oh-my-zsh
-[ ! -d "$HOME/.oh-my-zsh" ] && sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+#Install oh-my-zsh (RUNZSH=no: the installer otherwise execs into zsh and
+#halts this script; KEEPZSHRC=yes: don't clobber .zshrc — we copy our own below)
+[ ! -d "$HOME/.oh-my-zsh" ] && RUNZSH=no KEEPZSHRC=yes sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 #Set zsh as a default
-[ $SHELL != "/usr/bin/zsh" ] && chsh -s $(which zsh)
+[ "$SHELL" != "/usr/bin/zsh" ] && chsh -s "$(which zsh)"
 
 #Install necessary plugins
 [ ! -e "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions" ] && git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 [ ! -e "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting" ] && git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 
-#Check if starship is installed, probably needs review
+#Check if starship is installed
 if ! command -v starship &>/dev/null; then
   curl -sS https://starship.rs/install.sh | sh -s -- -y
-  starship preset nerd-font-symbols -o $HOME/.config/starship.toml
 else
   echo 'Starship is already installed'
 fi
@@ -27,13 +27,13 @@ command -v zip &>/dev/null || sudo apt install zip -y
 
 #Install Hack Nerd Font
 if ! fc-list | grep -qi 'Hack Nerd Font'; then
-  wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Hack.zip
+  wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/Hack.zip -O /tmp/Hack.zip
   mkdir -p $HOME/.local/share/fonts
-  unzip Hack.zip -d $HOME/.local/share/fonts
-  rm Hack.zip
+  unzip /tmp/Hack.zip -d $HOME/.local/share/fonts
+  rm /tmp/Hack.zip
   fc-cache -fv
 else
-  echo 'Hack font already isntalled'
+  echo 'Hack font already installed'
 fi
 
 #Copy config files

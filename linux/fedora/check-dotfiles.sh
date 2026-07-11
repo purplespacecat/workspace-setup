@@ -66,8 +66,21 @@ check_tool "lazygit"   "lazygit"   "see config-shell-tools-fedora.sh"
 check_tool "yazi"      "yazi"      "see config-shell-tools-fedora.sh"
 check_tool "fzf"       "fzf"       "git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && ~/.fzf/install"
 check_tool "gh"        "GitHub CLI" "sudo dnf install -y gh"
-check_tool "bw"        "Bitwarden CLI" "npm install -g @bitwarden/cli"
-check_tool "obsidian-cli" "obsidian-cli" "go install github.com/Yakitrak/obsidian-cli@latest"
+check_tool "tmux"      "tmux"      "sudo dnf install -y tmux"
+check_tool "op"        "1Password CLI" "see config-shell-tools-fedora.sh (1Password dnf repo)"
+check_tool "direnv"    "direnv"    "sudo dnf install -y direnv"
+check_tool "rclone"    "rclone"    "sudo dnf install -y rclone"
+
+# Obsidian CLI was renamed upstream to notesmd-cli (see LEARNINGS.md); it lands
+# in ~/go/bin, which may not be on this (bash) shell's PATH — check both.
+if ! command -v notesmd-cli &>/dev/null && [ ! -x "$HOME/go/bin/notesmd-cli" ]; then
+  flag "tool" "${RED}MISSING${NC}    tool: notesmd-cli (obsidian CLI)" "go install github.com/Yakitrak/notesmd-cli@latest"
+fi
+
+# tmux plugin manager
+if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
+  flag "plugin" "${RED}MISSING${NC}    tmux plugin manager (tpm)" "https://github.com/tmux-plugins/tpm|$HOME/.tmux/plugins/tpm"
+fi
 
 # fzf shell integration (.fzf.zsh must exist for .zshrc to source it)
 if command -v fzf &>/dev/null && [ ! -f "$HOME/.fzf.zsh" ]; then

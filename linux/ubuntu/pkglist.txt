@@ -16,5 +16,5 @@ btrfs-progs
 snapd
 luarocks
 golang-go
-neofetch
+fastfetch
 fontconfig
