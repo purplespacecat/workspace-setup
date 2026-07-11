@@ -1,0 +1,7 @@
+[Unit]
+Description=Antigravity Rules Backup
+
+[Service]
+Type=oneshot
+Environment=PATH=%h/.local/bin:/usr/local/bin:/usr/bin
+ExecStart=%h/.local/bin/sync_agyrules.sh

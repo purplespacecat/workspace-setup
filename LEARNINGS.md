@@ -51,9 +51,12 @@ URL, module path, or package name).
 - **Obsidian has no native rpm** — install via Flatpak (`md.obsidian.Obsidian`),
   which is preinstalled on Fedora Workstation/KDE.
 - **zsh completions** live in `~/.zsh_functions/`, which `config/shell/.zshrc`
-  adds to `fpath` (look for the `fpath+=...zsh_functions` line). Dropping a
-  `_<tool>` file there is enough — oh-my-zsh runs `compinit`, no `.zshrc` edit
-  needed. If a new completion doesn't show up, clear the cache:
+  adds to `fpath`. The `fpath+=` line MUST come **before**
+  `source $ZSH/oh-my-zsh.sh` — oh-my-zsh runs `compinit` there, and completion
+  files in dirs added to `fpath` *after* compinit never register (verified:
+  `$_comps[flux]` stays empty while `_flux` sits in `~/.zsh_functions`).
+  With the ordering right, dropping a `_<tool>` file there is enough — no other
+  `.zshrc` edit needed. If a new completion doesn't show up, clear the cache:
   `rm -f ~/.zcompdump* && exec zsh`.
 - **`curl` is deliberately not in pkglist / `dnf install`** — listing it forces a
   swap from `curl-minimal` (shipped in `@core`) to full `curl`. See the comment
@@ -76,3 +79,37 @@ URL, module path, or package name).
     so `/releases/latest` may point at a non-kustomize component — filter for the
     `kustomize/vX.Y.Z` tag instead. The slash in that tag must be **URL-encoded
     (`%2F`)** in the download path.
+
+## Arch
+
+- **pacman aborts the ENTIRE transaction on any "target not found"** — one
+  AUR-only or removed package in `pkglist.txt` (e.g. `yay-bin`, `snapd`,
+  `neofetch`) means *nothing* installs. Keep the list official-repos-only and
+  verify names against `archlinux.org/packages`. Comments in the pkglist are
+  fine only because `config-shell-tools-arch.sh` greps them out before piping
+  to pacman.
+
+## Windows / PowerShell
+
+- **try/catch around `winget`/`choco` is dead code** — native executables never
+  throw PowerShell terminating errors on failure; they only set
+  `$LASTEXITCODE`. Every "Failed to install…" catch branch was unreachable.
+  Check `$LASTEXITCODE -ne 0` instead (see the `Install-WingetApp` /
+  `Install-ChocoPackage` helpers).
+- **Hashtable indexing doesn't happen in bare arguments**:
+  `winget install --id=$hash[$key]` passes the literal string
+  `--id=System.Collections.Hashtable[key]`. Wrap it: `$($hash[$key])`.
+
+## General
+
+- **Beware literal `\!` sneaking into scripts** — `setup-tmux.sh` was written
+  with escaped bangs (`#\!/bin/bash`, `if \! command -v tmux`), likely an
+  artifact of a shell's history-expansion escaping. The shebang silently breaks,
+  and `\!` is not the negation keyword: bash runs a command literally named `!`,
+  the test always fails, and the script reports "already installed" without
+  installing anything. `bash -n` does NOT catch this — grep for `\\!` after
+  writing scripts through any tool that escapes `!`.
+- **oh-my-zsh's installer execs into zsh at the end** unless `RUNZSH=no` is
+  set, halting the calling script mid-run until the user exits; it also
+  overwrites `~/.zshrc` unless `KEEPZSHRC=yes`. All three distros' install
+  scripts set both.

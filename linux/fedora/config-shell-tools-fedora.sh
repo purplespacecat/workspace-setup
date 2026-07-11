@@ -26,11 +26,11 @@ fi
 step "tmux plugin manager"
 [ -d "$HOME/.tmux/plugins/tpm" ] || git clone -q https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
-step "nvm + Node 22"
-[ -d "$HOME/.nvm" ] || curl -so- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash >/dev/null
+step "nvm + Node 24"
+[ -d "$HOME/.nvm" ] || curl -so- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.5/install.sh | bash >/dev/null
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-nvm list 2>/dev/null | grep -q "v22" || nvm install 22 >/dev/null
+nvm list 2>/dev/null | grep -q "v24" || nvm install 24 >/dev/null
 
 step "fzf"
 [ -d "$HOME/.fzf" ] || { git clone -q --depth 1 https://github.com/junegunn/fzf.git ~/.fzf; ~/.fzf/install --all --no-bash --no-fish >/dev/null; }
@@ -99,3 +99,18 @@ systemctl --user daemon-reload
 echo "  Once per machine (interactive): follow the restore guide in the 1Password"
 echo "  item 'obsidian-vault-backup' (rclone gdrive OAuth + gdrive-crypt remote),"
 echo "  then: systemctl --user enable --now vault-backup.timer"
+
+step "Claude Code config backup (rclone → Google Drive, UNENCRYPTED)"
+# Daily backup of portable ~/.claude config (CLAUDE.md, settings.json, plugins/,
+# skills/, commands/, agents/) via an ALLOWLIST — secrets and private history
+# (.credentials.json, sessions/, projects/, history.jsonl) are never in scope.
+# Reuses the same plain [gdrive] remote the vault OAuth sets up (above).
+install -D "$SCRIPT_DIR/../../config/backup/claude-config-backup.sh" "$HOME/.local/bin/claude-config-backup.sh"
+cp "$SCRIPT_DIR/../../config/systemd/claude-config-backup.service" \
+   "$SCRIPT_DIR/../../config/systemd/claude-config-backup.timer" "$HOME/.config/systemd/user/"
+systemctl --user daemon-reload
+echo "  After the gdrive remote exists (see vault backup above):"
+echo "  systemctl --user enable --now claude-config-backup.timer"
+
+step "Antigravity setup"
+bash "$SCRIPT_DIR/../config-agy.sh"

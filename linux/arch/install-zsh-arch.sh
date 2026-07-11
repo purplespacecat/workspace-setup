@@ -4,7 +4,8 @@
 sudo -v
 
 # Install necessary packages silently
-sudo pacman -Sy --needed --noconfirm zsh git unzip zip wget base-devel
+# -Syu (not -Sy): installing after a partial database sync can break the system
+sudo pacman -Syu --needed --noconfirm zsh git unzip zip wget base-devel
 
 # Install yay if not installed
 if ! command -v yay &> /dev/null; then
@@ -18,14 +19,13 @@ fi
 if ! command -v starship &> /dev/null; then
     echo "Installing Starship..."
     yay -S --needed --noconfirm --removemake --mflags "--nocheck" starship
-    mkdir -p $HOME/.config
-    starship preset nerd-font-symbols -o $HOME/.config/starship.toml
 else
     echo "Starship is already installed"
 fi
 
-# Install Oh My Zsh
-[ ! -d "$HOME/.oh-my-zsh" ] && sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+# Install Oh My Zsh (RUNZSH=no: the installer otherwise execs into zsh and
+# halts this script; KEEPZSHRC=yes: don't clobber .zshrc — we copy our own below)
+[ ! -d "$HOME/.oh-my-zsh" ] && RUNZSH=no KEEPZSHRC=yes sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 # Set Zsh as default shell
 if [ "$SHELL" != "/usr/bin/zsh" ]; then
@@ -40,7 +40,7 @@ ZSH_CUSTOM=${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}
 # Install Hack Nerd Font
 if ! fc-list | grep -qi 'Hack Nerd Font'; then
     echo "Installing Hack Nerd Font..."
-    wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Hack.zip -O /tmp/Hack.zip
+    wget https://github.com/ryanoasis/nerd-fonts/releases/download/v3.4.0/Hack.zip -O /tmp/Hack.zip
     mkdir -p $HOME/.local/share/fonts
     unzip /tmp/Hack.zip -d $HOME/.local/share/fonts
     rm /tmp/Hack.zip

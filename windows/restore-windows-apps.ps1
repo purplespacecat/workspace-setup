@@ -38,6 +38,25 @@ if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
     exit 1
 }
 
+# --- Helpers ---
+# winget/choco are native executables: they never throw PowerShell terminating
+# errors on failure, so try/catch around them is dead code — check $LASTEXITCODE.
+function Install-WingetApp {
+    param([string]$Id)
+    winget install -e --id $Id -h --accept-source-agreements --accept-package-agreements
+    if ($LASTEXITCODE -ne 0) {
+        Write-Warning "Failed to install $Id via winget (exit code $LASTEXITCODE). Install it manually."
+    }
+}
+
+function Install-ChocoPackage {
+    param([string]$Name)
+    choco install $Name -y
+    if ($LASTEXITCODE -ne 0) {
+        Write-Warning "Failed to install $Name via Chocolatey (exit code $LASTEXITCODE)."
+    }
+}
+
 # --- Check for Chocolatey ---
 if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
     Write-Output "Chocolatey not found. Installing Chocolatey..."
@@ -64,66 +83,29 @@ dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /nores
 
 # --- Install Ubuntu via winget ---
 Write-Output "Installing Ubuntu for WSL..."
-try {
-    winget install -e --id=Canonical.Ubuntu -h
-} catch {
-    Write-Output "Failed to install Ubuntu via winget. Please install it manually from the Microsoft Store."
-}
+Install-WingetApp Canonical.Ubuntu
 
 # --- Install basic applications using winget ---
 Write-Output "Installing basic applications via winget..."
-
-# Google Chrome
-try {
-    winget install -e --id=Google.Chrome -h
-} catch {
-    Write-Output "Failed to install Google Chrome via winget."
-}
-
-# Visual Studio Code
-try {
-    winget install -e --id=Microsoft.VisualStudioCode -h
-} catch {
-    Write-Output "Failed to install Visual Studio Code via winget."
-}
-
-# Obsidian (adjust the package ID if necessary)
-try {
-    winget install -e --id=Obsidian.Obsidian -h
-} catch {
-    Write-Output "Failed to install Obsidian via winget."
-}
-
-# Steam
-try {
-    winget install -e --id=Valve.Steam -h
-} catch {
-    Write-Output "Failed to install Steam via winget."
-}
-
-# Telegram Desktop
-try {
-    winget install -e --id=Telegram.TelegramDesktop -h
-} catch {
-    Write-Output "Failed to install Telegram Desktop via winget."
+$wingetApps = @(
+    "Google.Chrome",
+    "Microsoft.VisualStudioCode",
+    "Obsidian.Obsidian",
+    "Valve.Steam",
+    "Telegram.TelegramDesktop"
+)
+foreach ($app in $wingetApps) {
+    Install-WingetApp $app
 }
 
 # --- Install Surfshark VPN via Chocolatey ---
 Write-Output "Installing Surfshark VPN via Chocolatey..."
-try {
-    # Adjust package name if needed (commonly "surfshark-vpn")
-    choco install surfshark-vpn -y
-} catch {
-    Write-Output "Failed to install Surfshark VPN via Chocolatey."
-}
+Install-ChocoPackage surfshark-vpn
 
 # --- Install Visual C++ Redistributable ---
-Write-Output "Installing Visual C++ Redistributable (2019) via Chocolatey..."
-try {
-    choco install vcredist2019 -y
-} catch {
-    Write-Output "Failed to install Visual C++ Redistributable."
-}
+# vcredist140 is the unified 2015-2022 redistributable (supersedes vcredist2019).
+Write-Output "Installing Visual C++ Redistributable (2015-2022) via Chocolatey..."
+Install-ChocoPackage vcredist140
 
 # --- Install additional Chocolatey packages ---
 Write-Output "Installing additional Chocolatey packages..."
@@ -141,30 +123,18 @@ $chocoPackages = @(
 )
 
 foreach ($pkg in $chocoPackages) {
-    try {
-        choco install $pkg -y
-    } catch {
-        Write-Output "Failed to install $pkg via Chocolatey."
-    }
+    Install-ChocoPackage $pkg
 }
 
 # --- Update AMD Drivers ---
 Write-Output "Attempting to update AMD drivers via winget..."
-try {
-    # Replace the package ID below with the correct one if necessary.
-    winget install -e --id=AMD.RadeonSoftware -h
-} catch {
-    Write-Output "AMD driver package not available via winget. Please update AMD drivers manually."
-}
+# Replace the package ID below with the correct one if necessary.
+Install-WingetApp AMD.RadeonSoftware
 
 # --- Attempt to install MS Office Home ---
 Write-Output "Attempting to install MS Office Home..."
-try {
-    # MS Office Home/Student is often not available as an automated install via winget/choco.
-    winget install -e --id=Microsoft.Office.Home -h
-} catch {
-    Write-Output "MS Office Home is not available via winget. Please install it manually."
-}
+# MS Office Home/Student is often not available as an automated install via winget/choco.
+Install-WingetApp Microsoft.Office.Home
 
 # --- Ensure non-default Microsoft Store apps are installed ---
 Write-Output "Ensuring non-default Microsoft Store apps are installed..."
@@ -175,7 +145,9 @@ Write-Output "Ensuring non-default Microsoft Store apps are installed..."
 $msAppsToInstall = @{
     "OpenAI.ChatGPT-Desktop"           = "OpenAI.ChatGPT-Desktop"
     "Microsoft.MicrosoftOfficeHub"       = "Microsoft.MicrosoftOfficeHub"
-    "MicrosoftTeams"                     = "MicrosoftTeams"
+    # New Teams: Appx name is MSTeams, winget ID Microsoft.Teams (classic
+    # "MicrosoftTeams" is retired)
+    "MSTeams"                            = "Microsoft.Teams"
     "5319275A.WhatsAppDesktop"           = "5319275A.WhatsAppDesktop"
     "Microsoft.OutlookForWindows"        = "Microsoft.OutlookForWindows"
     "Microsoft.PowerAutomateDesktop"     = "Microsoft.PowerAutomateDesktop"
@@ -195,11 +167,9 @@ foreach ($app in $msAppsToInstall.Keys) {
         Write-Output "$app is already installed."
     } else {
         Write-Output "$app is not installed. Attempting installation via winget..."
-        try {
-            winget install -e --id=$msAppsToInstall[$app] -h
-        } catch {
-            Write-Output "Failed to install $app via winget. Please install it manually from the Microsoft Store."
-        }
+        # $(...) is required: bare "$hash[$key]" in an argument expands the hash
+        # to its type name and appends "[key]" literally.
+        Install-WingetApp $($msAppsToInstall[$app])
     }
 }
 

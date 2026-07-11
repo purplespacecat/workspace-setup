@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "google-workspace": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@pegasusheavy/google-mcp@1.0.2"
+      ]
+    }
+  }
+}

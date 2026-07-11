@@ -1,0 +1,8 @@
+[Unit]
+Description=Claude Code config backup to Google Drive (rclone, unencrypted allowlist)
+
+[Service]
+Type=oneshot
+# PATH so systemd finds rclone in ~/.local/bin (cron would not — see LEARNINGS.md).
+Environment=PATH=%h/.local/bin:/usr/local/bin:/usr/bin
+ExecStart=%h/.local/bin/claude-config-backup.sh
